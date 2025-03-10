@@ -1,3 +1,4 @@
+
 const express = require("express");
 const app = express();
 const port = 3000;
@@ -34,6 +35,29 @@ app.get("/task/:id", (req, res) => {
     res.json(task);
 });
 
+// Delete a task by ID
+app.delete("/tasks/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const taskIndex = tasks.findIndex(t => t.id === id);
+    if (taskIndex === -1) {
+        return res.status(404).json({ error: "Task not found" });
+    }
+    tasks.splice(taskIndex, 1);//remove element at that particular task
+    res.status(200).json({ message: "Task deleted successfully" });
+});
+
+// Mark a task as complete
+app.patch("/tasks/:id", (req, res) => {
+    const id = parseInt(req.params.id);
+    const task = tasks.find(t => t.id === id);
+    if (!task) {
+        return res.status(404).json({ error: "Task not found" });
+    }
+    task.completed = true;
+    res.json({ message: "Task marked as completed", task });
+});
+
 app.listen(port, () => {
     console.log(`Task Manager running at http://localhost:${port}`);
 });
+
